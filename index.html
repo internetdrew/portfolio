@@ -4,9 +4,80 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
+      integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
+      crossorigin="anonymous"
+    />
+
     <link rel="stylesheet" href="./style.css" />
     <script src="./app.js" defer></script>
     <title>Andrew Rowley — Software Engineer</title>
   </head>
-  <body></body>
+  <body>
+    <nav class="navbar">
+      <div class="container">
+        <div class="logo">Andrew Rowley</div>
+        <ul class="nav">
+          <li><a href="#">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#">Projects</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <header class="header">
+      <div class="container">
+        <div class="intro">
+          <h1>Andrew Rowley is a Software Engineer located in New York.</h1>
+        </div>
+      </div>
+    </header>
+
+    <section class="about">
+      <div class="container">
+        <div class="about-text">
+          <h2 id="about">About Me</h2>
+          <p>
+            Hi! Online, I'm known as Internet Drew. I love creating effective
+            web-based solutions with aesthetically simple functionally pleasing
+            user-interfaces.
+          </p>
+        </div>
+        <div class="about-photo">
+          <img src="./images/andrewmoji.png" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <section class="projects hidden">
+      <div class="container">
+        <div class="project-box">
+          <img src="#" alt="project screenshot alt text" class="screenshot" />
+          <div class="project-description">
+            <p>This is what you need to know about this project.</p>
+          </div>
+          <div class="tech-stack">
+            <img
+              src="./images/html5-brands.svg"
+              alt="html5"
+              class="tech-icon"
+            />
+            <img
+              src="./images/css3-alt-brands.svg"
+              alt="css3"
+              class="tech-icon"
+            />
+            <img
+              src="./images/js-brands.svg"
+              alt="javascript"
+              class="tech-icon"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
 </html>
