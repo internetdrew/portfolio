@@ -4,6 +4,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 html {
@@ -135,8 +136,11 @@ ul {
   }
 }
 
-#top {
+#top-arrow {
   width: 40rem;
   height: auto;
+  position: fixed;
+  bottom: 30rem;
+  right: 30rem;
   cursor: pointer;
 }
