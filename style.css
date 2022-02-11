@@ -77,6 +77,10 @@ ul {
   right: auto;
 }
 
+.nav a:active {
+  transform: translateY(4px);
+}
+
 .navbar ul {
   display: flex;
   gap: 40rem;
@@ -129,4 +133,10 @@ ul {
   .about-text {
     order: 2;
   }
+}
+
+#top {
+  width: 40rem;
+  height: auto;
+  cursor: pointer;
 }
