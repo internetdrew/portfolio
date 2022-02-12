@@ -28,6 +28,12 @@ ul {
   list-style-type: none;
 }
 
+a {
+  text-decoration: none;
+  color: #333;
+  position: relative;
+}
+
 .container {
   max-width: 1100rem;
   margin: 0 auto;
@@ -49,10 +55,7 @@ ul {
   height: 100%;
 }
 .nav a {
-  text-decoration: none;
-  color: #333;
   font-size: 20rem;
-  display: inline-block;
   padding-bottom: 0.25rem;
   position: relative;
 }
@@ -64,7 +67,7 @@ ul {
   width: 0;
   height: 2px;
   background-color: #333;
-  transition: width 0.25s ease-out;
+  /* transition: width 0.25s ease-out; */
 }
 .nav a:hover::before {
   width: 100%;
