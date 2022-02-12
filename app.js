@@ -1,4 +1,4 @@
-const topButton = document.getElementById('top-arrow');
+const topButton = document.querySelector('.back-to-top-container');
 
 function toggleTopButton() {
   if (document.documentElement.scrollTop <= 150) {

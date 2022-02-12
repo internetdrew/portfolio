@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
 
+/* General styles */
 * {
   margin: 0;
   padding: 0;
@@ -17,7 +18,10 @@ body {
   line-height: 1.5;
   color: #333;
   background-color: #9cadce;
-  min-height: 100vh;
+}
+
+header {
+  margin-top: 50rem;
 }
 
 ul {
@@ -30,28 +34,20 @@ ul {
   padding: 0 30rem;
 }
 
+/* Navigation styles */
 .logo {
   font-weight: bold;
   font-size: 25rem;
 }
-
-.tech-icon {
-  width: 22rem;
-  height: auto;
-}
-
 .navbar {
   height: 100rem;
-  /* border: 1px solid black; */
 }
-
 .navbar .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 100%;
 }
-
 .nav a {
   text-decoration: none;
   color: #333;
@@ -60,7 +56,6 @@ ul {
   padding-bottom: 0.25rem;
   position: relative;
 }
-
 .nav a::before {
   content: '';
   position: absolute;
@@ -71,17 +66,14 @@ ul {
   background-color: #333;
   transition: width 0.25s ease-out;
 }
-
 .nav a:hover::before {
   width: 100%;
   left: 0;
   right: auto;
 }
-
 .nav a:active {
   transform: translateY(4px);
 }
-
 .navbar ul {
   display: flex;
   gap: 40rem;
@@ -89,10 +81,13 @@ ul {
   font-weight: bold;
 }
 
+/* Header styles */
 .header .container {
   display: flex;
-  flex: 1;
-  padding: 0 50rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 80rem;
+  padding: 0 80rem;
 }
 
 .about .container {
@@ -102,13 +97,8 @@ ul {
   flex-basis: 1;
 }
 
-.header .intro {
-  text-align: center;
-  padding: 100rem;
-}
-
 .about-photo img {
-  width: 250rem;
+  width: 400rem;
   height: auto;
 }
 
@@ -136,11 +126,22 @@ ul {
   }
 }
 
-#top-arrow {
-  width: 40rem;
+.back-to-top-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   height: auto;
   position: fixed;
   bottom: 30rem;
   right: 30rem;
   cursor: pointer;
+}
+
+.back-to-top-container img {
+  width: 40rem;
+}
+
+.back-to-top-container p {
+  /* font-size: 8rem; */
 }
