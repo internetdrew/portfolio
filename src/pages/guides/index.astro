@@ -1,0 +1,40 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getCollection } from "astro:content";
+import { slugify } from "../../utils";
+import ContentListItem from "@/components/ContentListItem.astro";
+
+const guides = await getCollection("guides");
+---
+
+<MainLayout
+  title="Guides | Internet Drew"
+  description="Guides to help developers use tools and technologies faster."
+>
+  <header class="text-center mt-24">
+    <h1 class="text-2xl font-medium">Guides</h1>
+    <p class="max-w-lg mx-auto font-light mt-6 md:text-lg text-neutral-400">
+      Docs tell you <em>what</em> exists. These guides lead with <em>why</em> things
+      matter and <em>when</em> to use them. Every guide begins with context and ends
+      with something you can run. Learn how tools connect, when they shine, and what
+      trade-offs they bring.
+    </p>
+  </header>
+
+  {
+    guides.length > 0 ? (
+      <ul class="flex flex-col max-w-screen-sm mx-auto mt-16 gap-4">
+        {guides.map((guide) => (
+          <ContentListItem
+            title={guide.data.title}
+            description={guide.data.description}
+            pubDate={guide.data.pubDate}
+            href={`/guides/${slugify(guide.data.title)}`}
+          />
+        ))}
+      </ul>
+    ) : (
+      <p class="text-center mt-16">No guides found.</p>
+    )
+  }
+</MainLayout>
