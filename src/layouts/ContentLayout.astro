@@ -92,7 +92,7 @@ const url = Astro.url.pathname;
       }
 
       <div
-        class="my-10 prose prose-invert max-w-none prose-h2:text-xl prose-h3:text-lg prose-headings:text-muted-foreground prose-a:text-pink-600 prose-p:text-neutral-200 prose-inline-code:text-pink-600 prose-inline-code:bg-neutral-800 prose-inline-code:px-1.5 prose-inline-code:py-0.5 prose-inline-code:rounded-sm prose-inline-code:before:content-none prose-inline-code:after:content-none"
+        class="my-10 prose prose-invert max-w-none prose-h2:text-xl prose-h3:text-lg prose-headings:text-muted-foreground prose-a:text-pink-600 prose-p:text-neutral-200 prose-inline-code:text-pink-600 prose-inline-code:bg-neutral-800 prose-inline-code:px-1.5 prose-inline-code:py-0.5 prose-inline-code:rounded-sm prose-inline-code:before:content-none prose-inline-code:after:content-none prose-blockquote:after:content-none prose-blockquote:before:content-none prose-blockquote:border-l-pink-600 prose-blockquote:bg-neutral-800/50"
       >
         <slot />
       </div>
@@ -108,4 +108,9 @@ const url = Astro.url.pathname;
   body {
     font-family: "Geist Variable", sans-serif;
   }
+
+  .prose {
+    :where(blockquote p:last-of-type):not(:where([class~="not-prose"],[class~="not-prose"] *))::after, :where(blockquote p:last-of-type):not(:where([class~="not-prose"],[class~="not-prose"] *))::before {
+        content: none;
+    }
 </style>
