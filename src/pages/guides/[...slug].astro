@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
-import ContentLayout from "../../layouts/ContentLayout.astro";
+import GuideLayout from "../../layouts/GuideLayout.astro";
 import { slugify } from "../../utils";
 
 export async function getStaticPaths() {
@@ -15,9 +15,9 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
 
-<ContentLayout
+<GuideLayout
   frontmatter={entry.data}
   listLink={{ title: "GUIDES", href: "/guides" }}
 >
   <Content />
-</ContentLayout>
+</GuideLayout>
