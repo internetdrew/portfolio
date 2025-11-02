@@ -56,9 +56,9 @@ To make this guide more concrete, I've created a simple React/Express full-stack
 
 If you want to, you can [clone the app from the GitHub repo here](https://github.com/internetdrew/react-express-starter.git) and follow instructions to get the app up and running in development.
 
-## Connecting to Our Supabase Project
+## Connecting to Your Supabase Project
 
-> If you've already connected your project, you can jump down to [the Docker setup](#setting-up-docker).
+> If you've already connected your project, you can jump down to [setting up the dev environment](#setting-up-the-dev-environment).
 
 To begin, we'll start by connecting a clean app to our Supabase project's production database, then transition to a local development environment.
 
@@ -88,13 +88,13 @@ touch .env
 ```
 
 Just be sure to include that file in your `.gitignore` file.
+
 In your `.env` file, add three values:
 
 ```bash
- # .env
-VITE_SUPABASE_PUB_KEY=your_public_anon_key
+VITE_SUPABASE_KEY=your_public_anon_key
 VITE_SUPABASE_URL=https://your_supabase_url.supabase.co
-SUPABASE_SEC_KEY=your_service_role_or_secret_key
+SUPABASE_SECRET_KEY=your_service_role_key
 ```
 
 > The "Vite" prefix I'm using above is to that the client code can read these values. You can [learn more about that here](https://vite.dev/guide/env-and-mode.html#env-variables). Keep in mind, other frameworks may have similar conventions to make sure you are intentfully allowing client-side code to use these values.
@@ -286,10 +286,156 @@ export const supabaseAdminClient = createClient<Database>(
 );
 ```
 
-`Note`
-
 > If you get a root directory TypeScript warning, open up your server directory's `tsconfig.json` file and change your rootDir from `.` to `..`, which tells it to start from one level up, which is where the shared directory is. I'm not sure if this is the ideal way to do this, so use your discretion.
 
-With that, we should be set up to use Supabase within our application.
+With that, we should be set up to use Supabase within our application. Now let's move on to the parts that trip people up.
 
-## Setting Up Docker
+## Setting Up the Dev Environment
+
+I'll be using Docker for this, but the flow should be about the same for your respective container runtime.
+
+First, let's open up Docker:
+
+```bash
+open -a docker
+```
+
+Once Docker is running, go to the root of your project and enter this into your terminal:
+
+```bash
+supabase init
+```
+
+This should create a new directory for you named `supabase`. You should also see a prompt for setting up VS Code/IntelliJ setting for Deno. You can choose what you'd like, but I usually choose no because I've never needed Deno, but you might.
+
+The next step is to get the container running. You can do that by running `supabase start`. Sometimes, this can be unpredictable. My advice if you do everything right and it shuts the container down, just run the command again. Sometimes, I've had to run `supabase start` multiple times to get it working as intended.
+
+After initial downloads, you should see a container with your project directory name in Docker. This could take a while, especially on the first run, but you'll know things are fully set up when you see this:
+
+```bash
+Started supabase local development setup.
+
+API URL: http://127.0.0.1:54321
+GraphQL URL: http://127.0.0.1:54321/graphql/v1
+S3 Storage URL: http://127.0.0.1:54321/storage/v1/s3
+MCP URL: http://127.0.0.1:54321/mcp
+Database URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+Studio URL: http://127.0.0.1:54323
+Mailpit URL: http://127.0.0.1:54324
+Publishable key: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH
+Secret key: sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz
+S3 Access Key: 625729a08b95bf1b7ff351a663f3a23c
+S3 Secret Key: 850181e4652dd023b7a98c58ae0d2d34bd487ee0cc3254aed6eda37307425907
+S3 Region: local
+```
+
+In order to complete our connection, we'll need to update our key values in our `.env` file.
+
+```bash
+# VITE_SUPABASE_KEY=your_public_anon_key
+# VITE_SUPABASE_URL=https://your_supabase_url.supabase.co
+# SUPABASE_SECRET_KEY=your_service_role_key
+
+VITE_SUPABASE_KEY=sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH
+VITE_SUPABASE_URL=https://your_supabase_url.supabase.co
+SUPABASE_SECRET_KEY=sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz
+```
+
+The values that are commented out? Those are your production values and should be added to your production environment. You'll no longer be using those in development.
+
+And that should complete the initial setup to get you up and running.
+
+But before we move on, here's a quick recap of what just happened.
+
+When you ran `supabase start`, Docker spun up a few containers, each running a part of Supabase.
+
+You’ve got:
+
+- A Postgres database at http://127.0.0.1:54322
+- Supabase’s API and auth layers handling logins, permissions, and storage
+- Studio at http://127.0.0.1:54323 where you can click around your data like a pro
+- And Mailpit, so you can test emails without spamming real inboxes
+
+Think of it like this: your computer is now hosting a full Supabase stack. You can create tables, experiment with policies, and break stuff without breaking production.
+
+To make sure things are running well, you might want to restart your client and server code. If you navigate to http://127.0.0.1:54323, you should see a Supabase studio setup that looks like your production environment but without the data you already added to production.
+
+This brings us to the first task, pulling our table schemas from the production environment into our development environment.
+
+## Pulling Production Schemas into Local Dev
+
+In order for us to pull our schemas from the production environment, since that's where we started, we need to first link our local environment to our production environment.
+
+In your project root directory:
+
+```bash
+supabase login
+```
+
+Just follow the prompts, enter your verification code, and you should be in.
+
+Next, we need to link our local environment with our project. To do that, enter in your terminal:
+
+```bash
+# Replace <project-id> with your actual project ID from: https://supabase.com/dashboard/project/<project-id>
+supabase link --project-ref <project-id>
+# You can get <project-id> from your project's dashboard URL:
+```
+
+Then you can pull your database:
+
+```bash
+supabase db pull
+```
+
+You might be met here with a warning:
+
+```bash
+The remote database's migration history does not match local files in supabase/migrations directory.
+```
+
+If so, you should run the suggested migration repairs **one at a time**, that way you can easily isolate any issues.
+
+If you run into issues here with connections, I'd suggest running `supabase stop` and `supabase start` again.
+
+-> Pick up from here <-
+
+## Troubleshooting
+
+Many of the issues I've run into when using the local development environment have been with the CLI. Some issues are clearly logged and others can be a bit difficult to debug. I'll keep a running list of issues I've run into with what worked for me to solve them.
+
+### Issues Getting the Container to Start
+
+The most common issue I've run into has been failed starts due to the _analytics_ container being unhealthy. If your issues are from there (run your command with the `--debug` flag and take a look at the logs or share them with an LLM to find the cause), you can also start without that or any other container by using the `--exclude` flag:
+
+```bash
+supabase start --exclude logflare
+```
+
+If you run into issues with your containers not running (or starting and stopping back-to-back), one of the things I've done to start over is to stop and remove the containers and the volumes holding their backup data.
+
+This sets you back to pre-container, so you'll be rebuilding the container from scratch, but you shouldn't have to worry about losing any data because that is all in your code.
+
+To remove the containers:
+
+```bash
+# Replace your-project-name with the name of your project directory
+docker stop $(docker ps -aq --filter label=com.supabase.cli.project=your-project-name)
+docker rm $(docker ps -aq --filter label=com.supabase.cli.project=your-project-name)
+```
+
+To remove the volumes:
+
+```bash
+docker volume rm $(docker volume ls -q --filter label=com.supabase.cli.project=your-project-name)
+```
+
+From there, you should be able to get things up and running via `supabase start`.
+
+Also ran into some issues I think are because of this:
+
+```bash
+Update your supabase/config.toml to fix it:
+[db]
+major_version = 15
+```
