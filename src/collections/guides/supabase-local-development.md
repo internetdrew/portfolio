@@ -396,13 +396,45 @@ The remote database's migration history does not match local files in supabase/m
 
 If so, you should run the suggested migration repairs **one at a time**, that way you can easily isolate any issues.
 
-If you run into issues here with connections, I'd suggest running `supabase stop` and `supabase start` again.
+If you run into issues here with connections, I'd suggest running `supabase stop` and `supabase start` again. If those issues persist, you might find a solution in [the troubleshooting section](#troubleshooting).
 
--> Pick up from here <-
+Once you get the `supabase db pull` command to work, you should now have a new `migrations` directory.
+
+If you visit your "Table Editor" page, you won't see your changes. To get your local development environment updated with that schema, you need to run `supabase db reset`, which will restart your local Postgres container and apply local migrations found in the `migrations` directory.
+
+Once you run that successfully, you should now see your schemas updated on the "Table Editor" page.
+
+## Making Local Changes to Your App
+
+You've made it! You're up and running with your local development environment and now you can finally make changes and test them out before shipping them to production.
+
+You can make your updates in [the studio](http://127.0.0.1:54323) just like you did in production.
+
+When you make those local changes, you'll eventually need to update your production database with those changes. So you'll need to create a migration.
+
+Let's say you created a `user_profiles` table. You could use the following command to create a migration with the changes:
+
+```bash
+supabase db diff -f add_user_profiles_table
+```
+
+## Pushing Local Changes to Your Remote Instance
+
+Once you've made your local change and you're ready to push them to production, you'll want to use the `supabase db push` command. But there is a catch if you're opening PRs, reviewing them, and merging after review: you can't have the migrations automatically merged to Supabase along with the merged code if you're on the free plan.
+
+So you could, in theory:
+
+- Push right before/after you merge to main or
+- Run the command with a Github Action. Something like [setup-cli](https://github.com/supabase/setup-cli) seems like a nice touch.
 
 ## Troubleshooting
 
 Many of the issues I've run into when using the local development environment have been with the CLI. Some issues are clearly logged and others can be a bit difficult to debug. I'll keep a running list of issues I've run into with what worked for me to solve them.
+
+### Suggestions to Avoid Hard-to-Debug Issues
+
+- Make your project ID in your `config.toml` file alpha-numberic. Don't use any special characters, not even a hyphen. There have been issues that have been solved by this change. I don't know why.
+- Run your commands with the `--debug` flag. It's a known issue that sometimes things will _not_ work... until you run it with the `--debug` flag. I don't know the cause. But it works. And it seems that running it will, in some instances, lead to debug auto-fixing things.
 
 ### Issues Getting the Container to Start
 
@@ -432,10 +464,22 @@ docker volume rm $(docker volume ls -q --filter label=com.supabase.cli.project=y
 
 From there, you should be able to get things up and running via `supabase start`.
 
-Also ran into some issues I think are because of this:
+### Your Database Version is a Mismatch
+
+You want your local and remote databases to have the same version. Your CLI should suggest a change that looks like this:
 
 ```bash
 Update your supabase/config.toml to fix it:
 [db]
 major_version = 15
 ```
+
+### Failing to Connect with Pooler
+
+Some people have received this message, which some have fixed by (supposedly) updating their database passsword:
+
+```bash
+failed to connect to postgres: failed to connect to `host=aws-0-us-east-1.pooler.supabase.com user=postgres.<REDACTED> database=postgres`: failed SASL auth (invalid SCRAM server-final-message received from server)
+```
+
+I found a hint to this fix [here](https://github.com/supabase/cli/issues/1760#issuecomment-1989905198).
