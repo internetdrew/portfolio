@@ -1,6 +1,6 @@
 ---
-title: "Setting Up Supabase's Local Development Environment with Docker"
-description: "A comprehensive guide to setting up Supabase locally with Docker, creating separate development and production environments for professional database workflows and seamless deployment."
+title: "Setting Up Supabase's Local Development Environment with Docker (and Google OAuth)"
+description: "A complete guide to setting up Supabase locally with Docker, managing separate dev and prod environments, integrating Google OAuth, and troubleshooting common issues."
 pubDate: 2025-10-27
 ogImageSrc: "supabase-local.png"
 isDraft: true
@@ -404,7 +404,7 @@ If you visit your "Table Editor" page, you won't see your changes. To get your l
 
 Once you run that successfully, you should now see your schemas updated on the "Table Editor" page.
 
-## Making Local Changes to Your App
+## Making Local Database Schema Changes
 
 You've made it! You're up and running with your local development environment and now you can finally make changes and test them out before shipping them to production.
 
@@ -418,14 +418,52 @@ Let's say you created a `user_profiles` table. You could use the following comma
 supabase db diff -f add_user_profiles_table
 ```
 
-## Pushing Local Changes to Your Remote Instance
+## Pushing Local Database Changes to Production
 
 Once you've made your local change and you're ready to push them to production, you'll want to use the `supabase db push` command. But there is a catch if you're opening PRs, reviewing them, and merging after review: you can't have the migrations automatically merged to Supabase along with the merged code if you're on the free plan.
 
 So you could, in theory:
 
-- Push right before/after you merge to main or
-- Run the command with a Github Action. Something like [setup-cli](https://github.com/supabase/setup-cli) seems like a nice touch.
+- Push right after you successfully merge to main or
+- Run the command with a [Github Action](https://github.com/features/actions).
+  - Something like [setup-cli](https://github.com/supabase/setup-cli) seems like a nice touch.
+
+## Adding OAuth to Local and Production
+
+If you've already set up auth in prod and have it working in your app, you've probably already realized there is a problem now that you're using the local development environment. Here are the changes you need to make to get things working the way you want them to.
+
+If you have never set up Google OAuth, I suggest you [follow the Supabase guide on integrating Google OAuth and creating the signin callback](https://supabase.com/docs/guides/auth/social-login/auth-google?queryGroups=platform&platform=web&queryGroups=environment&environment=client&queryGroups=framework&framework=express). You'll see a quick section here for the local development setup, but I think you should [look at the dedicated section instead for better clarity](https://supabase.com/docs/guides/local-development/overview#use-auth-locally).
+
+By default, I believe your `config.toml` should have this:
+
+```yaml
+[auth.external.apple]
+enabled = false
+```
+
+But since we're using Google, we want it to instead be this:
+
+```yaml
+[auth.external.google]
+enabled = true
+```
+
+Following the prior link, be sure to add your `SUPABASE_AUTH_GOOGLE_CLIENT_ID` and `SUPABASE_AUTH_GOOGLE_SECRET` in your `.env` file.
+
+To make the local setup work, you'll also need to make changes in your OAuth client in [Google Cloud Platform dashboard](https://console.cloud.google.com/home/dashboard).
+
+There are only two things left to do:
+
+- Add http://localhost under Authorized JavaScript origins and
+- Add http://127.0.0.1:54321/auth/v1/callback under Authorized redirect URIs and save.
+
+To get everything up and running, you'll want to run `supabase stop && supabase start` and pull any RLS policies you might have with `supabase db pull --schema auth` command.
+
+And that should be everything you need to get your local development environment running.
+
+I hope this helped! If you have any questions, you can always reach me on [X(Twitter)](https://x.com/internet_drew) and [LinkedIn](https://www.linkedin.com/in/internetdrew/).
+
+Peace!
 
 ## Troubleshooting
 
