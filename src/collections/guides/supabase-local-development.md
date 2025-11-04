@@ -10,84 +10,93 @@ isDraft: true
 
 ## Why and When to Use
 
-Like many, you've probably been so excited to use Supabase that you followed all of their easy to follow guides to get you from 0 to production. They're awesome. But if you're here, you might have realized that there's a problem: everything you do is going _straight_ to production.
+Supabase makes it incredibly easy to go from zero to production, and their guides are fantastic. But if you’ve ever followed them, you might have noticed a problem: everything you do hits production immediately.
 
-When you develop professionally, you usually have at least two seperate environments (one for development, one for production, likely one for staging, etc.).
+In professional development, you typically maintain at least two separate environments—development and production—and sometimes a staging environment. Using a local development setup gives you several advantages:
 
-You'll want to use the local development environment for a few reasons:
+1. **Isolated development** – Make major changes without touching production data.
+2. **Faster iteration cycles** – No network latency when testing database queries, auth flows, or Edge Functions.
+3. **Safe experimentation** – Run destructive operations, migrations, and data transformations risk-free.
+4. **Cost savings** – Avoid consuming production resources during development, especially for functions, storage, and bandwidth.
+5. **Easier debugging** – Access logs directly, inspect your database, and reset state instantly.
 
-1. **Isolated development** - You can make massive changes without needing to make changes to production.
-2. **Faster iteration cycles** - No network latency when testing database operations, auth flows, or Edge Functions.
-3. **Safe experimentation** - Test destructive operations, schema migrations, and data transformations without risk.
-4. **Cost savings** - Avoid using production resources during development, especially important for functions, storage, and bandwidth.
-5. **Easier debugging** - Full access to logs, direct database access, and the ability to reset state instantly.
+By running Supabase locally, you gain freedom, speed, and safety while building your app.
 
 ## How We'll Approach This
 
-I've found through some digging on the Supabase subreddit that people are often confused on how to set this up.
+Through some digging on the Supabase subreddit, I’ve noticed that people often get confused about setting up a local environment.
 
-And I think that might be because the docs cover _what_ exists and what you can do really well, but I don't know if it gives enough consideration to _where_ you might be coming from.
+I think part of the reason is that the docs do a great job of showing _what_ exists and what you can do, but they don’t always consider _where_ you might be coming from.
 
-And this is important because it's one thing to set this environment up _before_ you've set up your production flow, but if you followed the quick-start guides, it's likely you're already pushing to production.
+This matters because setting up a local environment **before** creating your production flow is very different from doing it after you’ve already been pushing to production. If you’ve followed the quick-start guides, chances are you’re already live.
 
-So in a sense, you actually need to take a step back, change some environment variables, and think differently about your environment. This is as much a technical change as it is a shift in mindset. Both are subtle shifts, but as you know, sometimes the subtle shift not made gives you **hours** of confusion and headache.
+So, you need to take a step back: change some environment variables and shift your mindset. Both are subtle changes, but as you know, missing a subtle shift can cause **hours** of confusion and headaches.
 
-I'll save you from that!
+I’ll save you from that.
 
-To make it easier to understand where you'll need to make changes between development and production environment values, I'll build everything from scratch for development first and show you exactly which values you'll need to change for deployment, for both Supabase and Google OAuth, because you'll need to make changes within your auth platform console.
+To make it easy to see where to change values between development and production, we’ll build everything from scratch for development first. I’ll show you exactly which values to update for deployment, including for Supabase and Google OAuth (yes, you’ll need to update your auth platform console too).
 
-My goal here is to give context (_when_, _why_, _how_) to the docs (_what_) and get you up and running in less than 10 minutes, unconfused.
+My goal is to give you context (_when_, _why_, and _how_) to complement the docs’ _what_, so you can get up and running without the confusion others experience.
 
 ## What You'll Learn
 
-- How to build a local development environment around a full-stack application
-- Which environment variables you need to change between development and production
-- How to implement Google OAuth between the two environments
+- How to set up a local development environment for a full-stack application
+- Which environment variables to update between development and production
+- How to configure Google OAuth for both environments
 
 ## Prerequisites
 
-- A container runtime compatible with Docker APIs ([Docker](https://docs.docker.com/desktop/), [Rancher Desktop](https://rancherdesktop.io/), [Podman](https://podman.io/), [OrbStack](https://orbstack.dev/))
+- A container runtime compatible with Docker APIs, such as:
+  - [Docker](https://docs.docker.com/desktop/)
+  - [Rancher Desktop](https://rancherdesktop.io/)
+  - [Podman](https://podman.io/)
+  - [OrbStack](https://orbstack.dev/)
 
 ## Sample Starter Application (Optional)
 
 > You can skip this section if you already have an application. The environment configuration principles apply to any stack.
 
-To make this guide more concrete, I've created a simple React/Express full-stack application for you to start with that can hopefully lend some clarity into implementation with your stack.
+To make this guide more concrete, I’ve created a simple React/Express full-stack application you can use as a starter. It should help illustrate how to implement these concepts in your own stack.
 
-If you want to, you can [clone the app from the GitHub repo here](https://github.com/internetdrew/react-express-starter.git) and follow instructions to get the app up and running in development.
+You can [clone the app from GitHub here](https://github.com/internetdrew/react-express-starter.git) and follow the instructions to get it running in development.
 
 ## Connecting to Your Supabase Project
 
-> If you've already connected your project, you can jump down to [setting up the dev environment](#setting-up-the-dev-environment).
+> If you’ve already connected your project, you can jump down to [setting up the dev environment](#setting-up-the-dev-environment).
 
-To begin, we'll start by connecting a clean app to our Supabase project's production database, then transition to a local development environment.
+We’ll start by connecting a clean app to your Supabase project's production database, then transition to a local development environment.
 
-While this approach may seem backwards from a typical development workflow, it mirrors the path most developers take when following Supabase's quick-start guides.
+This approach may feel a bit backwards compared to a typical development workflow, but it mirrors the path most developers take when following Supabase’s quick-start guides.
 
-First, lets get out API keys to connect to the Supabase project from [the API Keys section](https://supabase.com/dashboard/project/_/settings/api-keys/).
+### Getting Your API Keys
 
-I'll be using the new API Keys, but the principals of these are the same from an implementation standpoint.
+First, grab your API keys from the [API Keys section](https://supabase.com/dashboard/project/_/settings/api-keys/).
 
-There are essentially two keys available here:
+I’ll be using the **new API Keys**, but the principles are the same for implementation regardless of which set you use.
 
-- One is safe to for the browser if you've enabled Row Level Security (RLS), which I believe is on by default
-- The other is absolutely **not safe to use in the browser** because if has access to bypass
+There are essentially two keys:
 
-If you're using Legacy API Keys, those are respectively the anon public key and the service role (secret) key.
+- **Browser-safe key** – Can be used in the browser if Row Level Security (RLS) is enabled (on by default).
+- **Secret key** – Should **never** be exposed in the browser, as it has full access, bypassing RLS.
 
-If you're using the new API Keys, they're respectively the Publishable key (`sb_...`) and the secret key (`sb_secret_...`)
+For reference:
+
+| Key Type     | Legacy Keys      | New Keys                     |
+| ------------ | ---------------- | ---------------------------- |
+| Browser-safe | anon public key  | Publishable key (`sb_...`)   |
+| Secret       | service role key | Secret key (`sb_secret_...`) |
 
 ### Adding Keys as Environment Variables
 
-To protect our keys and not ship them with our code, we can add them as environment variables.
+To protect our keys and avoid shipping them with code, we can add them as environment variables.
 
-From the root of the app, we can add a `.env` file:
+From the root of your app, create a `.env` file:
 
 ```bash
 touch .env
 ```
 
-Just be sure to include that file in your `.gitignore` file.
+Just be sure to add `.env` to your `.gitignore` file.
 
 In your `.env` file, add three values:
 
@@ -119,7 +128,7 @@ Once installed, we can move on creating our Supabase browser and server clients.
 
 The Supabase clients are what we'll use to interact with our backend.
 
-First, we'll start off with our initial types from our Supabase instance. For the stack I created, one where the client and server are in their own directories, I approach this with a third directory for shared things like this because this will allow you the flexibility of being able to use type definitions from your database on either side of your application.
+First, we'll start off with our initial types from our Supabase instance. For the stack I created, one where the client and server are in their own directories, I approach this with a third directory for shared things to allow you the flexibility of being able to use type definitions from your database on either side of your application.
 
 From the root of the application, make a new directory as a sibling to the `client` and `server` directories:
 
@@ -127,7 +136,7 @@ From the root of the application, make a new directory as a sibling to the `clie
 mkdir shared
 ```
 
-Then create a `package.json` file within that directory and make it `commonjs` to bridge the gap between the client and server code. Create the file:
+Then create a `package.json` file within that directory and make the type `commonjs` to bridge the gap between the client and server code. Create the file:
 
 ```bash
 cd shared && touch package.json
@@ -151,7 +160,7 @@ supabase gen types typescript --project-id abcdefghijklmnopqrst > shared/databas
 
 You should now see a new file in your shared directory.
 
-This will give your client-side and server-side Supabase clients type-safety with your database schema, which will make it easy to identify type issues, both when sending data to your backend and when fetching. Whenever you update your database schema, you'll want to run this code again.
+This will give your client-side and server-side Supabase clients type-safety with your database schema. Whenever you update your database schema, you'll want to run this code again.
 
 To avoid headaches, you might want to just create a script to run it. That's what I do and it makes updates far less of a headache.
 
@@ -217,15 +226,15 @@ npm i dotenv @supabase/supabase-js
 
 From the file we're about to create, we're exporting two clients:
 
-The first is the server client that will make it easy for us to manage authentication across the stack with ease, which is great for user based access.
+- The first is the server client that will make it easy for us to manage authentication across the stack with ease, which is great for user based access.
 
-The second is an admin client. The reason for the admin client is due to a situation many people run into when first encountering Row-Level Security (RLS.) You can [read all about Row-Level Security with Supabase here](https://supabase.com/docs/guides/database/postgres/row-level-security).
+- The second is an admin client. The reason for the admin client is due to a situation many people run into when first encountering Row-Level Security (RLS.) You can [read all about Row-Level Security with Supabase here](https://supabase.com/docs/guides/database/postgres/row-level-security).
 
 In short, RLS makes your database handle “who can see or change what” automatically at query time. Every request runs as the user who made it, which is great for normal app reads and writes. But for trusted stuff—like seed scripts, migrations, admin dashboards, or batch jobs, writing detailed policies for every case can get messy fast.
 
 That’s where the admin client comes in. It uses a service key that bypasses RLS, so your server can do privileged work while the rest of your app still gets all the benefits of RLS by default. The important thing to remember here is that, by bypassing, it means your access logic needs to happen at the application (not database) level, so map out your access properly because this is like having keys to the entire building.
 
-**Only use the admin client on the server and never ship its secret key to the browser.**
+**Only use the admin client on the server and never ship its secret key to the browser or your repository.**
 
 In the server's `src` directory, create a new `utils` directory and add a `supabase.ts` file in it.
 
@@ -306,7 +315,7 @@ Once Docker is running, go to the root of your project and enter this into your 
 supabase init
 ```
 
-This should create a new directory for you named `supabase`. You should also see a prompt for setting up VS Code/IntelliJ setting for Deno. You can choose what you'd like, but I usually choose no because I've never needed Deno, but you might.
+This should create a new directory for you named `supabase`. You should also see a prompt for setting up VS Code/IntelliJ settings for Deno. You can choose what you'd like, but I usually choose no because I've never needed Deno, but you might.
 
 The next step is to get the container running. You can do that by running `supabase start`. Sometimes, this can be unpredictable. My advice if you do everything right and it shuts the container down, just run the command again. Sometimes, I've had to run `supabase start` multiple times to get it working as intended.
 
@@ -337,7 +346,7 @@ In order to complete our connection, we'll need to update our key values in our 
 # SUPABASE_SECRET_KEY=your_service_role_key
 
 VITE_SUPABASE_KEY=sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH
-VITE_SUPABASE_URL=https://your_supabase_url.supabase.co
+VITE_SUPABASE_URL=http://127.0.0.1:54321
 SUPABASE_SECRET_KEY=sb_secret_N7UND0UgjKTVK-Uodkm0Hg_xSvEMPvz
 ```
 
@@ -354,17 +363,17 @@ You’ve got:
 - A Postgres database at http://127.0.0.1:54322
 - Supabase’s API and auth layers handling logins, permissions, and storage
 - Studio at http://127.0.0.1:54323 where you can click around your data like a pro
-- And Mailpit, so you can test emails without spamming real inboxes
+- Etc.
 
-Think of it like this: your computer is now hosting a full Supabase stack. You can create tables, experiment with policies, and break stuff without breaking production.
+Now you can create tables, experiment with policies, and break stuff without breaking production.
 
-To make sure things are running well, you might want to restart your client and server code. If you navigate to http://127.0.0.1:54323, you should see a Supabase studio setup that looks like your production environment but without the data you already added to production.
+To make sure things are running well, you might want to restart your client and server code. If you navigate to [http://127.0.0.1:54323](http://127.0.0.1:54323), you should see a Supabase studio setup that looks like your production environment but without the data you already added to production.
 
 This brings us to the first task, pulling our table schemas from the production environment into our development environment.
 
 ## Pulling Production Schemas into Local Dev
 
-In order for us to pull our schemas from the production environment, since that's where we started, we need to first link our local environment to our production environment.
+In order for us to pull our schemas from the production environment, we need to first link our local environment to our production environment.
 
 In your project root directory:
 
@@ -374,12 +383,11 @@ supabase login
 
 Just follow the prompts, enter your verification code, and you should be in.
 
-Next, we need to link our local environment with our project. To do that, enter in your terminal:
+Next, we need to link our local environment with our project. To do that, enter in your terminal from the root of your project directory:
 
 ```bash
-# Replace <project-id> with your actual project ID from: https://supabase.com/dashboard/project/<project-id>
+# Replace <project-id> with your actual project ID
 supabase link --project-ref <project-id>
-# You can get <project-id> from your project's dashboard URL:
 ```
 
 Then you can pull your database:
@@ -388,7 +396,7 @@ Then you can pull your database:
 supabase db pull
 ```
 
-You might be met here with a warning:
+If you've already made muliple changes to your remote database, you might be met with a warning:
 
 ```bash
 The remote database's migration history does not match local files in supabase/migrations directory.
@@ -400,7 +408,7 @@ If you run into issues here with connections, I'd suggest running `supabase stop
 
 Once you get the `supabase db pull` command to work, you should now have a new `migrations` directory.
 
-If you visit your "Table Editor" page, you won't see your changes. To get your local development environment updated with that schema, you need to run `supabase db reset`, which will restart your local Postgres container and apply local migrations found in the `migrations` directory.
+If you visit your "Table Editor" page [in the studio](http://127.0.0.1:54323), you won't see your changes. To get your local development environment updated with that schema, you need to run `supabase db reset`, which will restart your local Postgres container and apply local migrations found in the `migrations` directory.
 
 Once you run that successfully, you should now see your schemas updated on the "Table Editor" page.
 
@@ -408,7 +416,7 @@ Once you run that successfully, you should now see your schemas updated on the "
 
 You've made it! You're up and running with your local development environment and now you can finally make changes and test them out before shipping them to production.
 
-You can make your updates in [the studio](http://127.0.0.1:54323) just like you did in production.
+You can make your updates in the studio just like you did in production.
 
 When you make those local changes, you'll eventually need to update your production database with those changes. So you'll need to create a migration.
 
@@ -418,13 +426,15 @@ Let's say you created a `user_profiles` table. You could use the following comma
 supabase db diff -f add_user_profiles_table
 ```
 
-## Pushing Local Database Changes to Production
+This will create a new migration file with those schema changes.
 
-Once you've made your local change and you're ready to push them to production, you'll want to use the `supabase db push` command. But there is a catch if you're opening PRs, reviewing them, and merging after review: you can't have the migrations automatically merged to Supabase along with the merged code if you're on the free plan.
+## Pushing Migrations to Production
+
+Once you've made your local change and you're ready to push them to production, you'll want to use the `supabase db push` command. Your migrations are in your code, and your database is remote, so regardless of if you're pushing straight to main or opening new branches and PRs, you'll have to send those changes to the remote db separately.
 
 So you could, in theory:
 
-- Push right after you successfully merge to main or
+- Push right before or after you successfully merge to main or
 - Run the command with a [Github Action](https://github.com/features/actions).
   - Something like [setup-cli](https://github.com/supabase/setup-cli) seems like a nice touch.
 
@@ -434,7 +444,7 @@ If you've already set up auth in prod and have it working in your app, you've pr
 
 If you have never set up Google OAuth, I suggest you [follow the Supabase guide on integrating Google OAuth and creating the signin callback](https://supabase.com/docs/guides/auth/social-login/auth-google?queryGroups=platform&platform=web&queryGroups=environment&environment=client&queryGroups=framework&framework=express). You'll see a quick section here for the local development setup, but I think you should [look at the dedicated section instead for better clarity](https://supabase.com/docs/guides/local-development/overview#use-auth-locally).
 
-By default, I believe your `config.toml` should have this:
+By default, I believe your `config.toml` should have this somewhere:
 
 ```yaml
 [auth.external.apple]
@@ -448,22 +458,50 @@ But since we're using Google, we want it to instead be this:
 enabled = true
 ```
 
-Following the prior link, be sure to add your `SUPABASE_AUTH_GOOGLE_CLIENT_ID` and `SUPABASE_AUTH_GOOGLE_SECRET` in your `.env` file.
+Following the prior link, be sure to copy your google client ID and secret from [the Google Cloud Platform dashboard](https://console.cloud.google.com/home/dashboard) when setting up your client. You'll want to add those values to your `.env` file as your `SUPABASE_AUTH_GOOGLE_CLIENT_ID` and `SUPABASE_AUTH_GOOGLE_SECRET`.
 
-To make the local setup work, you'll also need to make changes in your OAuth client in [Google Cloud Platform dashboard](https://console.cloud.google.com/home/dashboard).
+For your local setup to work with OAuth so you can log in locally, there are two things left to do:
 
-There are only two things left to do:
+- Add http://localhost under Authorized JavaScript Origins and
+- Add http://127.0.0.1:54321/auth/v1/callback under Authorized Redirect URIs and save.
 
-- Add http://localhost under Authorized JavaScript origins and
-- Add http://127.0.0.1:54321/auth/v1/callback under Authorized redirect URIs and save.
+From your client-side code, you should now be able to sign in like this:
+
+```tsx
+// This is to your auth/callback server endpoint,
+// not to be confused with the auth/v1/callback above
+const { error } = await supabase.auth.signInWithOAuth({
+  provider: "google",
+  options: {
+    redirectTo: `${window.location.origin}/auth/callback`,
+  },
+});
+```
+
+On your server, you should be able to make things work like this:
+
+```typescript
+app.get("/auth/callback", async function (req, res) {
+  const code = req.query.code;
+  const next = req.query.next ?? "/";
+
+  if (code) {
+    const supabase = createServerSupabaseClient(req, res);
+    await supabase.auth.exchangeCodeForSession(code as string);
+  }
+  res.redirect(303, `/${(next as string)?.slice(1)}`);
+});
+```
 
 To get everything up and running, you'll want to run `supabase stop && supabase start` and pull any RLS policies you might have with `supabase db pull --schema auth` command.
 
-And that should be everything you need to get your local development environment running.
+And that should be everything you need to get your local development environment running with successful Google OAuth.
 
-I hope this helped! If you have any questions, you can always reach me on [X(Twitter)](https://x.com/internet_drew) and [LinkedIn](https://www.linkedin.com/in/internetdrew/).
+I hope this helped!
 
-Peace!
+If you have any questions, you can always reach me on [X(Twitter)](https://x.com/internet_drew) and [LinkedIn](https://www.linkedin.com/in/internetdrew/). Below, you'll see some fixes I've discovered after hours of agony that I hope will save you massive amounts of time.
+
+Happy building!
 
 ## Troubleshooting
 

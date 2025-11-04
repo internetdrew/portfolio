@@ -9,13 +9,13 @@ export interface Project {
 }
 
 const projects: Project[] = [
-  {
-    title: "Where's the Garlic?",
-    description:
-      "Kitchen inventory made simple. Know what you have, know what you need.",
-    siteUrl: "https://www.wheresthegarlic.com/",
-    cta: "Visit the app",
-  },
+  // {
+  //   title: "Where's the Garlic?",
+  //   description:
+  //     "Kitchen inventory made simple. Know what you have, know what you need.",
+  //   siteUrl: "https://www.wheresthegarlic.com/",
+  //   cta: "Visit the app",
+  // },
   // {
   //   title: "The HYBRD Launch Video",
   //   description:
@@ -27,15 +27,17 @@ const projects: Project[] = [
 ];
 ---
 
-<section id="projects" class="mt-14 mb-6">
-  <h2 class="font-semibold text-neutral-400">Projects</h2>
-  <ul class="mt-4 grid gap-4 sm:grid-cols-2">
-    {
-      projects.map((project) => (
-        <li>
-          <ProjectCard project={project} />
-        </li>
-      ))
-    }
-  </ul>
-</section>
+{
+  projects?.length > 0 && (
+    <section id="projects" class="mt-14 mb-6">
+      <h2 class="font-semibold text-neutral-400">Projects</h2>
+      <ul class="mt-4 grid gap-4 sm:grid-cols-2">
+        {projects.map((project) => (
+          <li>
+            <ProjectCard project={project} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
