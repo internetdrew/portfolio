@@ -24,14 +24,16 @@ const guides = await getCollection("guides");
   {
     guides.length > 0 ? (
       <ul class="flex flex-col max-w-screen-sm mx-auto mt-16 gap-4">
-        {guides.map((guide) => (
-          <ContentListItem
-            title={guide.data.title}
-            description={guide.data.description}
-            pubDate={guide.data.pubDate}
-            href={`/guides/${slugify(guide.data.title)}`}
-          />
-        ))}
+        {guides
+          .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+          .map((guide) => (
+            <ContentListItem
+              title={guide.data.title}
+              description={guide.data.description}
+              pubDate={guide.data.pubDate}
+              href={`/guides/${slugify(guide.data.title)}`}
+            />
+          ))}
       </ul>
     ) : (
       <p class="text-center mt-16">No guides found.</p>

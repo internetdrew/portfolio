@@ -7,6 +7,7 @@ import { siteDescription } from "../constants";
 import EmailSonner from "./EmailSonner";
 import Me from "../images/me.webp";
 import YoutubeIcon from "../icons/youtube.astro";
+import { roles } from "../constants";
 ---
 
 <header
@@ -15,7 +16,7 @@ import YoutubeIcon from "../icons/youtube.astro";
   <div class="flex-1 max-w-md">
     <h1 class="font-semibold">Andrew Rowley</h1>
     <p class="font-medium text-neutral-400">
-      Web Developer. Technical Content Creator.
+      {roles}
     </p>
     <p class="my-4">{siteDescription}</p>
     <div class="flex items-center gap-3 text-sm fill-neutral-400">

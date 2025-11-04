@@ -1,4 +1,4 @@
 export const siteDescription =
-  "I build web apps and help developers understand and adopt technical products.";
+  "I love building products that make work and life easier and bringing brand, product, and customer stories to life in short films.";
 
-export const roles = "Web Developer. Technical Content Creator.";
+export const roles = "Software Developer. Visual Brand Storyteller.";
