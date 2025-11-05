@@ -1,0 +1,11 @@
+---
+import { getCollection } from "astro:content";
+import FilmsCarousel from "./FilmsCarousel";
+const films = await getCollection("films");
+export type FilmsCollection = typeof films;
+---
+
+<section class="mt-14 mb-4 space-y-2">
+  <h2 class="font-semibold text-muted-foreground">Short Films</h2>
+  <FilmsCarousel client:load films={films} />
+</section>

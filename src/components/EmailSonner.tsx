@@ -30,7 +30,7 @@ const EmailSonner = () => {
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="cursor-pointer size-5 transition-colors duration-150 group-hover:text-pink-600 text-neutral-400"
+        className="cursor-pointer size-5 transition-colors duration-150 group-hover:text-pink-600"
       >
         <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path>
         <rect x="2" y="4" width="20" height="16" rx="2"></rect>

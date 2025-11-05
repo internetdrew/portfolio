@@ -8,7 +8,7 @@ const guides = await getCollection("guides");
 {
   guides.length > 0 && (
     <section id="guides" class="mt-14 mb-4 space-y-2">
-      <h2 class="font-semibold text-neutral-400">Guides</h2>
+      <h2 class="font-semibold text-muted-foreground">Guides</h2>
       <ul class="flex flex-col gap-4">
         {guides
           .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())

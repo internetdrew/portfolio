@@ -1,0 +1,39 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getCollection } from "astro:content";
+import { slugify } from "../../utils";
+import ContentListItem from "@/components/ContentListItem.astro";
+
+const films = await getCollection("films");
+---
+
+<MainLayout
+  title="Short Films | Internet Drew"
+  description="Short films that showcase cinematic brand, product, and customer stories."
+>
+  <header class="text-center mt-24">
+    <h1 class="text-2xl font-medium">Short Films</h1>
+    <p class="max-w-lg mx-auto font-light mt-6 md:text-lg text-neutral-400">
+      Short films that showcase cinematic brand, product, and customer stories.
+    </p>
+  </header>
+
+  {
+    films.length > 0 ? (
+      <ul class="flex flex-col max-w-screen-sm mx-auto mt-16 gap-4">
+        {films
+          .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+          .map((film) => (
+            <ContentListItem
+              title={film.data.title}
+              description={film.data.description}
+              pubDate={film.data.pubDate}
+              href={`/films/${slugify(film.data.title)}`}
+            />
+          ))}
+      </ul>
+    ) : (
+      <p class="text-center mt-16">No films found.</p>
+    )
+  }
+</MainLayout>

@@ -24,7 +24,22 @@ const guides = defineCollection({
   }),
 });
 
+const films = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/collections/films" }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      description: z.string(),
+      pubDate: z.coerce.date(),
+      ogImageSrc: z.string(),
+      poster: image(),
+      isDraft: z.boolean(),
+      videoUrl: z.string(),
+    }),
+});
+
 export const collections = {
   insights,
   guides,
+  films,
 };

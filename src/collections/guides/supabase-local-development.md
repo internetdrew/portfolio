@@ -1,7 +1,7 @@
 ---
 title: "Setting Up Supabase's Local Development Environment with Docker (and Google OAuth)"
 description: "A complete guide to setting up Supabase locally with Docker, managing separate dev and prod environments, integrating Google OAuth, and troubleshooting common issues."
-pubDate: 2025-10-27
+pubDate: 2025-11-04
 ogImageSrc: "supabase-local.png"
 isDraft: true
 ---
@@ -497,12 +497,6 @@ To get everything up and running, you'll want to run `supabase stop && supabase 
 
 And that should be everything you need to get your local development environment running with successful Google OAuth.
 
-I hope this helped!
-
-If you have any questions, you can always reach me on [X(Twitter)](https://x.com/internet_drew) and [LinkedIn](https://www.linkedin.com/in/internetdrew/). Below, you'll see some fixes I've discovered after hours of agony that I hope will save you massive amounts of time.
-
-Happy building!
-
 ## Troubleshooting
 
 Many of the issues I've run into when using the local development environment have been with the CLI. Some issues are clearly logged and others can be a bit difficult to debug. I'll keep a running list of issues I've run into with what worked for me to solve them.
@@ -559,3 +553,10 @@ failed to connect to postgres: failed to connect to `host=aws-0-us-east-1.pooler
 ```
 
 I found a hint to this fix [here](https://github.com/supabase/cli/issues/1760#issuecomment-1989905198).
+
+## Goodbye For Now
+I hope this helped!
+
+If you have any questions, you can always reach me on [X(Twitter)](https://x.com/internet_drew) and [LinkedIn](https://www.linkedin.com/in/internetdrew/). 
+
+Happy building!

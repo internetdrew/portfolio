@@ -8,8 +8,8 @@ const insights = await getCollection("insights");
 {
   insights.length > 0 && (
     <section id="insights" class="mt-14 mb-4 space-y-2">
-      <h2 class="font-semibold text-neutral-400">Insights</h2>
-      <ul class="flex flex-col divide-y divide-accent-foreground">
+      <h2 class="font-semibold text-muted-foreground">Insights</h2>
+      <ul class="flex flex-col gap-4">
         {insights
           .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
           .map((insight) => (
