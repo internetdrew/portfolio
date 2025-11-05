@@ -31,7 +31,7 @@ const films = defineCollection({
     description: z.string(),
     pubDate: z.coerce.date(),
     ogImageSrc: z.string(),
-    thumbNailSrc: z.string(),
+    posterSrc: z.string(),
     isDraft: z.boolean(),
     videoUrl: z.string(),
   }),
