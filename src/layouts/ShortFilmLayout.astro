@@ -15,10 +15,9 @@ interface Props {
 
 const { frontmatter, listLink } = Astro.props;
 const url = Astro.url.pathname;
-
-const posterWidth = frontmatter?.poster?.width ?? 1280;
-const posterHeight = frontmatter?.poster?.height ?? 720;
-const posterAR = `${posterWidth} / ${posterHeight}`;
+const posterWidth = frontmatter.poster.width;
+const posterHeight = frontmatter.poster.height;
+const posterAR = posterWidth / posterHeight;
 ---
 
 <html lang="en">
@@ -103,53 +102,50 @@ const posterAR = `${posterWidth} / ${posterHeight}`;
         controls
         class={`video-js vjs-theme-city rounded-sm w-full overflow-hidden`}
         poster={frontmatter.poster.src}
-        width={posterWidth}
-        height={posterHeight}
-        style={`aspect-ratio: ${posterAR};`}
-        data-setup="{}"
+        preload="metadata"
       >
         <source
-          src="https://stream.mux.com/1EHVNzSVPa4wosU1aKzw2QArwzocMRvNkSis2i64xUw.m3u8"
+          src={frontmatter.videoUrl}
           type="application/x-mpegURL"
-        />
-      </video>
-
-      <div
-        class="my-10 prose prose-invert max-w-none prose-h2:text-xl prose-h3:text-lg prose-headings:text-muted-foreground prose-a:text-pink-600 prose-p:text-neutral-200 prose-inline-code:text-pink-600 prose-inline-code:bg-neutral-800 prose-inline-code:px-1.5 prose-inline-code:py-0.5 prose-inline-code:rounded-sm prose-inline-code:before:content-none prose-inline-code:after:content-none prose-blockquote:after:content-none prose-blockquote:before:content-none prose-blockquote:border-l-pink-600 prose-blockquote:bg-neutral-800/50"
+        /></video
       >
-        <slot />
-      </div>
     </main>
-    <script src="https://vjs.zencdn.net/8.23.4/video.min.js"></script>
-    <script>
-      import videojs from "video.js";
-      import type Player from "video.js/dist/types/player";
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const player = videojs("vid1", {
-          fluid: true,
-          preload: "metadata",
-          controls: true,
-          html5: {
-            vhs: {
-              overrideNative: true, // Let Safari use native HLS
-            },
-          },
-        });
-
-        // Force load for mobile
-        player.ready(function (this: Player) {
-          this.load();
-        });
-
-        window.addEventListener("beforeunload", () => {
-          if (player && !player.isDisposed()) {
-            player.dispose();
-          }
-        });
-      });
-    </script>
+    <div
+      class="my-10 prose prose-invert max-w-none prose-h2:text-xl prose-h3:text-lg prose-headings:text-muted-foreground prose-a:text-pink-600 prose-p:text-neutral-200 prose-inline-code:text-pink-600 prose-inline-code:bg-neutral-800 prose-inline-code:px-1.5 prose-inline-code:py-0.5 prose-inline-code:rounded-sm prose-inline-code:before:content-none prose-inline-code:after:content-none prose-blockquote:after:content-none prose-blockquote:before:content-none prose-blockquote:border-l-pink-600 prose-blockquote:bg-neutral-800/50"
+    >
+      <slot />
+    </div>
   </body>
+  <script src="https://vjs.zencdn.net/8.23.4/video.min.js"></script>
+  <script>
+    import videojs from "video.js";
+    import type Player from "video.js/dist/types/player";
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const player = videojs("vid1", {
+        fluid: true,
+        preload: "metadata",
+        controls: true,
+        html5: {
+          vhs: {
+            overrideNative: true, // Let Safari use native HLS
+          },
+        },
+      });
+
+      // Force load for mobile
+      player.ready(function (this: Player) {
+        this.load();
+      });
+
+      window.addEventListener("beforeunload", () => {
+        if (player && !player.isDisposed()) {
+          player.dispose();
+        }
+      });
+    });
+  </script>
 </html>
 
 <style>
