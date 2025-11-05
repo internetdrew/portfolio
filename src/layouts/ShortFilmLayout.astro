@@ -1,0 +1,174 @@
+---
+import Navbar from "../components/Navbar.astro";
+import "@fontsource-variable/geist";
+import "../styles/global.css";
+import { Image } from "astro:assets";
+import localBirdImage from "../../images/subfolder/localBirdImage.png";
+
+interface Props {
+  frontmatter: any;
+  listLink: {
+    title: string;
+    href: string;
+  };
+}
+
+const { frontmatter, listLink } = Astro.props;
+const url = Astro.url.pathname;
+
+const posterWidth = frontmatter?.poster?.width ?? 1280;
+const posterHeight = frontmatter?.poster?.height ?? 720;
+const posterAR = `${posterWidth} / ${posterHeight}`;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta property="og:title" content={`${frontmatter.title}`} />
+    <meta property="og:type" content="article" />
+    <meta
+      property="og:image"
+      content={`https://internetdrew.com/${frontmatter.ogImageSrc}`}
+    />
+    <meta
+      property="og:image:secure_url"
+      content={`https://internetdrew.com/${frontmatter.ogImageSrc}`}
+    />
+    <meta property="og:url" content={`https://internetdrew.com${url}`} />
+    <meta property="og:image:type" content="image/png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:site_name" content="Internet Drew" />
+    <meta name="twitter:image:alt" content={frontmatter.title} />
+    <meta
+      name="twitter:image"
+      content={`https://internetdrew.com/${frontmatter.ogImageSrc}`}
+    />
+    <meta
+      name="description"
+      property="og:description"
+      content={frontmatter.description}
+    />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="author" content={frontmatter.author} />
+    <meta name="article:published_time" content={frontmatter.pubDate} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Video JS (start) -->
+    <link href="https://vjs.zencdn.net/8.23.4/video-js.css" rel="stylesheet" />
+    <link
+      href="https://unpkg.com/@videojs/themes@1/dist/city/index.css"
+      rel="stylesheet"
+    />
+    <!-- Video JS (end) -->
+
+    <title>{`${frontmatter.title} - Internet Drew`}</title>
+  </head>
+
+  <body class="pb-10 bg-neutral-950 text-neutral-50">
+    <Navbar />
+    <main class="max-w-screen-sm mx-auto px-4">
+      <header class="mt-14 rounded-lg text-center p-4 sm:p-8">
+        <a
+          href={listLink.href}
+          class="text-xs text-pink-600 font-semibold p-2.5 ring ring-pink-600/50 rounded-md bg-pink-900/10 mb-4 inline-block leading-none"
+          >{listLink.title}</a
+        >
+        <h1 class="text-2xl md:text-3xl lg:text-4xl font-semibold">
+          {frontmatter.title}
+        </h1>
+        <p class="mt-4 max-w-screen-sm text-neutral-400 mx-auto sm:text-lg">
+          {frontmatter.description}
+        </p>
+
+        <time
+          datetime={frontmatter.pubDate}
+          class="mt-4 block text-pink-600/90 text-sm"
+        >
+          {
+            new Date(frontmatter.pubDate).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              timeZone: "UTC",
+            })
+          }
+        </time>
+      </header>
+
+      <video
+        id="vid1"
+        controls
+        class={`video-js vjs-theme-city rounded-sm w-full overflow-hidden`}
+        poster={frontmatter.poster.src}
+        width={posterWidth}
+        height={posterHeight}
+        style={`aspect-ratio: ${posterAR};`}
+        data-setup="{}"
+      >
+        <source
+          src="https://stream.mux.com/1EHVNzSVPa4wosU1aKzw2QArwzocMRvNkSis2i64xUw.m3u8"
+          type="application/x-mpegURL"
+        />
+      </video>
+
+      <div
+        class="my-10 prose prose-invert max-w-none prose-h2:text-xl prose-h3:text-lg prose-headings:text-muted-foreground prose-a:text-pink-600 prose-p:text-neutral-200 prose-inline-code:text-pink-600 prose-inline-code:bg-neutral-800 prose-inline-code:px-1.5 prose-inline-code:py-0.5 prose-inline-code:rounded-sm prose-inline-code:before:content-none prose-inline-code:after:content-none prose-blockquote:after:content-none prose-blockquote:before:content-none prose-blockquote:border-l-pink-600 prose-blockquote:bg-neutral-800/50"
+      >
+        <slot />
+      </div>
+    </main>
+    <script src="https://vjs.zencdn.net/8.23.4/video.min.js"></script>
+    <script>
+      import videojs from "video.js";
+      import type Player from "video.js/dist/types/player";
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const player = videojs("vid1", {
+          fluid: true,
+          preload: "metadata",
+          controls: true,
+          html5: {
+            vhs: {
+              overrideNative: true, // Let Safari use native HLS
+            },
+          },
+        });
+
+        // Force load for mobile
+        player.ready(function (this: Player) {
+          this.load();
+        });
+
+        window.addEventListener("beforeunload", () => {
+          if (player && !player.isDisposed()) {
+            player.dispose();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  html {
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    font-family: "Geist Variable", sans-serif;
+  }
+
+  .prose {
+    :where(blockquote p:last-of-type)
+      :not(:where([class~="not-prose"], [class~="not-prose"] *))
+      ::after,
+    :where(blockquote p:last-of-type)
+      :not(:where([class~="not-prose"], [class~="not-prose"] *))
+      ::before {
+      content: none;
+    }
+  }
+</style>
