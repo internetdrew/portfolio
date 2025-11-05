@@ -3,7 +3,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 import Intro from "../components/Intro.astro";
 import Projects from "../components/Projects.astro";
 import { siteDescription } from "../constants";
-import TutorialsList from "../components/TutorialsList.astro";
+import GuidesList from "../components/GuidesList.astro";
 import InsightsList from "../components/InsightsList.astro";
 import { roles } from "../constants";
 ---
@@ -11,6 +11,6 @@ import { roles } from "../constants";
 <MainLayout title={`Andrew Rowley | ${roles}`} description={siteDescription}>
   <Intro />
   <Projects />
-  <TutorialsList />
+  <GuidesList />
   <InsightsList />
 </MainLayout>
