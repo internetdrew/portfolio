@@ -10,7 +10,7 @@ const { title, description, pubDate, href } = Astro.props;
 
 <li>
   <article
-    class="relative space-y-2 group transition-all duration-300 p-4 hover:bg-neutral-900 rounded-lg"
+    class="relative space-y-2 group transition-all duration-300 p-4 hover:bg-primary rounded-lg"
   >
     <h3 class="font-semibold">
       <a href={href}>
@@ -18,7 +18,7 @@ const { title, description, pubDate, href } = Astro.props;
         {title}
       </a>
     </h3>
-    <p class="mt-1 text-sm text-neutral-400">
+    <p class="mt-1 text-sm text-muted-foreground">
       {description}
     </p>
     <time class="text-xs text-muted-foreground">
