@@ -110,7 +110,13 @@ const url = Astro.url.pathname;
   }
 
   .prose {
-    :where(blockquote p:last-of-type):not(:where([class~="not-prose"],[class~="not-prose"] *))::after, :where(blockquote p:last-of-type):not(:where([class~="not-prose"],[class~="not-prose"] *))::before {
-        content: none;
+    :where(blockquote p:last-of-type):not(
+        :where([class~="not-prose"], [class~="not-prose"] *)
+      )::after,
+    :where(blockquote p:last-of-type):not(
+        :where([class~="not-prose"], [class~="not-prose"] *)
+      )::before {
+      content: none;
     }
+  }
 </style>
