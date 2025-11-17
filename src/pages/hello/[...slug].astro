@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from "astro:content";
 import { slugify } from "../../utils";
-import JobsLayout from "@/layouts/JobsLayout.astro";
+import HelloLayout from "@/layouts/HelloLayout.astro";
 
 export async function getStaticPaths() {
   const hellos = await getCollection("hellos");
@@ -15,6 +15,6 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
 
-<JobsLayout frontmatter={entry.data}>
+<HelloLayout frontmatter={entry.data}>
   <Content />
-</JobsLayout>
+</HelloLayout>
