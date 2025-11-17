@@ -1,0 +1,108 @@
+---
+import Navbar from "../components/Navbar.astro";
+import "@fontsource-variable/geist";
+import "../styles/global.css";
+import { VideoPlayerContainer } from "@/components/VideoPlayerContainer";
+import JobsCTA from "@/components/JobsCTA";
+import ToasterWrapper from "@/components/ToasterWrapper";
+
+interface Props {
+  frontmatter: any;
+}
+
+const { frontmatter } = Astro.props;
+const url = Astro.url.pathname;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      property="og:title"
+      content={`Andrew at ${frontmatter.companyName}`}
+    />
+    <meta property="og:type" content="article" />
+    <meta
+      property="og:image"
+      content={`https://internetdrew.com/${frontmatter.ogImageSrc}`}
+    />
+    <meta
+      property="og:image:secure_url"
+      content={`https://internetdrew.com/${frontmatter.ogImageSrc}`}
+    />
+    <meta property="og:url" content={`https://internetdrew.com${url}`} />
+    <meta property="og:image:type" content="image/png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:site_name" content="Internet Drew" />
+    <meta name="twitter:image:alt" content={frontmatter.title} />
+    <meta
+      name="twitter:image"
+      content={`https://internetdrew.com/${frontmatter.ogImageSrc}`}
+    />
+    <meta
+      name="description"
+      property="og:description"
+      content={frontmatter.description}
+    />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="author" content={frontmatter.author} />
+    <meta name="article:published_time" content={frontmatter.pubDate} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <title>{`Andrew at ${frontmatter.companyName}`}</title>
+  </head>
+
+  <body class="pb-10 bg-neutral-950 text-neutral-50">
+    <main class="max-w-screen-sm mx-auto px-4">
+      <header class="mt-14 rounded-lg text-center p-4 sm:p-8">
+        <h1 class="text-2xl md:text-3xl lg:text-4xl font-semibold">
+          Andrew Rowley<br />{
+            frontmatter.jobTitle && <span>{frontmatter.jobTitle}</span>
+          }
+          at {frontmatter.companyName}
+        </h1>
+        <p class="mt-4 max-w-screen-sm text-neutral-400 mx-auto sm:text-lg">
+          {frontmatter.tagline}
+        </p>
+      </header>
+
+      {
+        frontmatter.videoUrl && (
+          <VideoPlayerContainer client:load videoUrl={frontmatter.videoUrl} />
+        )
+      }
+
+      <div
+        class="my-10 prose prose-invert max-w-none prose-h2:text-2xl prose-h3:text-lg prose-headings:text-muted-foreground prose-a:text-pink-600 prose-p:text-neutral-200 prose-inline-code:text-pink-600 prose-inline-code:bg-neutral-800 prose-inline-code:px-1.5 prose-inline-code:py-0.5 prose-inline-code:rounded-sm prose-inline-code:before:content-none prose-inline-code:after:content-none prose-blockquote:after:content-none prose-blockquote:before:content-none prose-blockquote:border-l-pink-600 prose-blockquote:bg-neutral-800/50"
+      >
+        <slot />
+      </div>
+      <JobsCTA client:load />
+    </main>
+    <ToasterWrapper client:load />
+  </body>
+</html>
+
+<style>
+  html {
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    font-family: "Geist Variable", sans-serif;
+  }
+
+  .prose {
+    :where(blockquote p:last-of-type):not(
+        :where([class~="not-prose"], [class~="not-prose"] *)
+      )::after,
+    :where(blockquote p:last-of-type):not(
+        :where([class~="not-prose"], [class~="not-prose"] *)
+      )::before {
+      content: none;
+    }
+  }
+</style>
