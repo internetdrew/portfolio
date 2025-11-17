@@ -38,8 +38,21 @@ const films = defineCollection({
     }),
 });
 
+const hellos = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/collections/hello" }),
+  schema: () =>
+    z.object({
+      companyName: z.string(),
+      tagline: z.string(),
+      jobTitle: z.string().optional(),
+      accentColor: z.string(),
+      videoUrl: z.string(),
+    }),
+});
+
 export const collections = {
   insights,
   guides,
   films,
+  hellos,
 };
