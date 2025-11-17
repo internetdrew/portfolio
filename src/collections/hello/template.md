@@ -23,7 +23,7 @@ Could be 3–5 items, each crisp:
 • Technical ability to prototype AI-driven content experiences
 • Content systems thinking (organization, workflows, scale)
 
-## Relevant Work / Proof
+## Relevant Work
 
 A very small set of examples (2–3 max).
 • One project that matches their style
@@ -32,7 +32,7 @@ A very small set of examples (2–3 max).
 
 Each with a one-sentence explainer. No walls of text.
 
-## What I’d Do in My First 30 Days
+## My First 30 Days
 
 This looks confident and shows you’re already thinking like part of their team.
 Keep it super tight:
