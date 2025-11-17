@@ -60,11 +60,15 @@ const url = Astro.url.pathname;
       <header class="mt-14 rounded-lg text-center p-4 sm:p-8">
         <h1 class="text-2xl md:text-3xl lg:text-4xl font-semibold">
           Andrew Rowley<br />{
-            frontmatter.jobTitle && <span>{frontmatter.jobTitle}</span>
+            frontmatter.jobTitle && (
+              <span class="accent">{frontmatter.jobTitle}</span>
+            )
           }
           at {frontmatter.companyName}
         </h1>
-        <p class="mt-4 max-w-screen-sm text-neutral-400 mx-auto sm:text-lg">
+        <p
+          class="mt-4 max-w-screen-sm text-muted-foreground mx-auto sm:text-lg"
+        >
           {frontmatter.tagline}
         </p>
       </header>
@@ -76,15 +80,22 @@ const url = Astro.url.pathname;
       }
 
       <div
-        class="my-10 prose prose-invert max-w-none prose-h2:text-2xl prose-h3:text-lg prose-headings:text-muted-foreground prose-a:text-pink-600 prose-p:text-neutral-200 prose-inline-code:text-pink-600 prose-inline-code:bg-neutral-800 prose-inline-code:px-1.5 prose-inline-code:py-0.5 prose-inline-code:rounded-sm prose-inline-code:before:content-none prose-inline-code:after:content-none prose-blockquote:after:content-none prose-blockquote:before:content-none prose-blockquote:border-l-pink-600 prose-blockquote:bg-neutral-800/50"
+        class="my-10 prose prose-invert max-w-none prose-h2:text-2xl prose-h3:text-lg prose-p:text-muted-foreground prose-p:text-lg prose-a:text-pink-600 prose-inline-code:text-pink-600 prose-inline-code:bg-neutral-800 prose-inline-code:px-1.5 prose-inline-code:py-0.5 prose-inline-code:rounded-sm prose-inline-code:before:content-none prose-inline-code:after:content-none prose-blockquote:after:content-none prose-blockquote:before:content-none prose-blockquote:border-l-pink-600 prose-blockquote:bg-neutral-800/50"
       >
         <slot />
       </div>
-      <JobsCTA client:load />
+      <JobsCTA client:load accentColor={frontmatter.accentColor} />
     </main>
     <ToasterWrapper client:load />
   </body>
 </html>
+
+<script define:vars={{ accentColor: frontmatter.accentColor }}>
+  const accentElements = document.querySelectorAll(".accent");
+  accentElements.forEach((element) => {
+    element.style.color = accentColor;
+  });
+</script>
 
 <style>
   html {

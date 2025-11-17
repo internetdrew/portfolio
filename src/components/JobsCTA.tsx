@@ -1,7 +1,11 @@
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
-const JobsCTA = () => {
+interface JobsCTAProps {
+  accentColor: string;
+}
+
+const JobsCTA = ({ accentColor }: JobsCTAProps) => {
   const copyEmailToClipboard = async () => {
     try {
       await navigator.clipboard.writeText("andrew@internetdrew.com");
@@ -24,12 +28,12 @@ const JobsCTA = () => {
       🚀 Let's talk!{" "}
       <a
         href="https://cal.com/internetdrew/15-min-chat"
-        className="text-pink-600"
+        style={{ color: accentColor }}
       >
         Book a time here
       </a>{" "}
       or email me at{" "}
-      <span className="text-pink-600" onClick={copyEmailToClipboard}>
+      <span style={{ color: accentColor }} onClick={copyEmailToClipboard}>
         <Tooltip>
           <TooltipTrigger>andrew@internetdrew.com</TooltipTrigger>
           <TooltipContent>
