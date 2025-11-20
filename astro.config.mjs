@@ -28,6 +28,6 @@ export default defineConfig({
     },
   },
   redirects: {
-    "/blog": "/insights",
+    "/blog/[...slug]": "/insights/[...slug]",
   },
 });
