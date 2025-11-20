@@ -27,4 +27,7 @@ export default defineConfig({
       langs: ["tsx", "typescript", "javascript", "json", "css", "html"],
     },
   },
+  redirects: {
+    "/blog": "/insights",
+  },
 });
